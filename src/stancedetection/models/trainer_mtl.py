@@ -13,9 +13,8 @@ from torch.utils.data import DataLoader
 from tqdm.auto import tqdm, trange
 from transformers import AdamW, AutoConfig, AutoTokenizer, get_linear_schedule_with_warmup
 
-import wandb
 from stancedetection.data import iterators as data_iterators
-from stancedetection.models.nn import RobertaForSequenceClassificationMTL
+from stancedetection.models.nn import RobertaForSequenceClassificationMTL, BERTForSequenceClassificationMTL
 from stancedetection.util.mappings import TASK_MAPPINGS
 from stancedetection.util.model_utils import batch_to_device, get_learning_rate
 from stancedetection.util.util import NpEncoder, configure_logging, set_seed
@@ -119,8 +118,8 @@ def evaluate_and_export(model, datasets, subset_name, args):
     metrics["loss"] = eval_loss
     print_metrics(metrics, is_test="test" == subset_name)
 
-    for metric, value in metrics.items():
-        wandb.run.summary[f"summary_{subset_name}_{metric}"] = value
+    # for metric, value in metrics.items():
+    #     wandb.run.summary[f"summary_{subset_name}_{metric}"] = value
 
     if not os.path.exists(args.output_dir):
         os.makedirs(args.output_dir)
@@ -180,7 +179,7 @@ def create_datasets(args, tokenizer, model_config):
         task_description = TASK_MAPPINGS[task]
 
         task_id2label = task_description["id2label"]
-        data_dir = pathlib.Path(args.data_dir) / task_description["task_dir"]
+        data_dir = pathlib.Path(args.data_dir)
         dataset_loader = task_description["loader"](data_dir, task, task_id2label)
 
         if args.do_train:
@@ -233,6 +232,8 @@ def load_model_from_pretrained(
 ):
     if labelmaps and not hasattr(model_config, "task2labels"):
         model_config.task2labels = labelmaps["task2labels"]
+    if labelmaps and not hasattr(model_config, "task2id"):
+        model_config.task2id = labelmaps["task2id"]
 
     from_pretrained_kwargs = {
         "config": model_config,
@@ -240,7 +241,10 @@ def load_model_from_pretrained(
         "cache_dir": cache_dir,
     }
 
-    model = RobertaForSequenceClassificationMTL.from_pretrained(
+    # model = RobertaForSequenceClassificationMTL.from_pretrained(
+    #     model_name_or_path, **from_pretrained_kwargs
+    # )
+    model = BERTForSequenceClassificationMTL.from_pretrained(
         model_name_or_path, **from_pretrained_kwargs
     )
 
@@ -343,7 +347,9 @@ def train(model, tokenizer, optimizer, scheduler, train_datasets, val_datasets, 
             batch["task_name"] = task_name
 
             model.train()
-            loss, logits = model(**batch)
+            outputs= model(**batch, return_dict=True)
+            logits = outputs.logits
+            loss = outputs.loss
 
             labels = local_to_global_labels(
                 batch["labels"].detach().cpu().numpy(), model.config.task2labels[task_id]
@@ -390,16 +396,16 @@ def train(model, tokenizer, optimizer, scheduler, train_datasets, val_datasets, 
 
                 accuracy = float(np.mean(list(acc_history)[-args.gradient_accumulation_steps :]))
 
-                wandb.log(
-                    {
-                        "train": {
-                            "loss": tr_loss,
-                            "accuracy": accuracy,
-                            "learning_rate": learning_rate,
-                        }
-                    },
-                    step=global_step,
-                )
+                # wandb.log(
+                #     {
+                #         "train": {
+                #             "loss": tr_loss,
+                #             "accuracy": accuracy,
+                #             "learning_rate": learning_rate,
+                #         }
+                #     },
+                #     step=global_step,
+                # )
 
                 tr_loss = 0
 
@@ -458,7 +464,7 @@ def evaluate_and_compare_val(
     print_metrics(metrics, is_test=False)
 
     global_step = get_optimizer_step(optimizer)
-    wandb.log({"validation": metrics}, step=global_step)
+    # wandb.log({"validation": metrics}, step=global_step)
     export_model(model, tokenizer, optimizer, scheduler, args, metrics, str(global_step))
     if best_metric < metrics[args.evaluation_metric]:
         logger.info(
@@ -776,12 +782,12 @@ def main():
     )
 
     logger.info("Training/evaluation parameters %s", args)
-    wandb.login()
+    # wandb.login()
 
-    wandb.init(config=args)
+    # wandb.init(config=args)
 
     if args.do_train:
-        wandb.watch(model)
+        # wandb.watch(model)
         total_examples = sum(len(dataset) for dataset in data_iters["train"])
         steps_per_epoch = (
             int(np.ceil(total_examples / args.train_batch_size)) // args.gradient_accumulation_steps

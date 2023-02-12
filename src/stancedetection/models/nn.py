@@ -340,7 +340,7 @@ class BERTForSequenceClassificationMTL(BertPreTrainedModel):
             output_hidden_states=output_hidden_states,
             return_dict=return_dict,
         )
-        sequence_output = outputs[1]
+        sequence_output = outputs.last_hidden_state[:, 0, :]
         task_id = self.config.task2id[task_name]
         classifier = self.classifiers[task_id]
         logits = classifier(sequence_output)

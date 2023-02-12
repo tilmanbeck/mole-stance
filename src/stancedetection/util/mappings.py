@@ -1,91 +1,109 @@
 from stancedetection.data import loaders as data_loaders
 
+
 TASK_MAPPINGS = {
     # Stance Benchmark
     "arc": {
         "task_dir": "ARC",
-        "loader": data_loaders.StanceLoader,
+        # "loader": data_loaders.StanceLoader,
+        "loader": data_loaders.StanceLoaderContext,
         "id2label": {0: "unrelated", 1: "discuss", 2: "agree", 3: "disagree"},
     },
     "argmin": {
         "task_dir": "ArgMin",
-        "loader": data_loaders.StanceLoader,
+        # "loader": data_loaders.StanceLoader,
+        "loader": data_loaders.StanceLoaderContext,
         "id2label": {0: "Argument_against", 1: "Argument_for"},
     },
     "fnc1": {
         "task_dir": "FNC-1",
-        "loader": data_loaders.StanceLoader,
+        # "loader": data_loaders.StanceLoader,
+        "loader": data_loaders.StanceLoaderContext,
         "id2label": {0: "unrelated", 1: "discuss", 2: "agree", 3: "disagree"},
     },
     "iac1": {
         "task_dir": "IAC",
-        "loader": data_loaders.StanceLoader,
+        # "loader": data_loaders.StanceLoader,
+        "loader": data_loaders.StanceLoaderContext,
         "id2label": {0: "anti", 1: "pro", 2: "other"},
     },
     "ibmcs": {
         "task_dir": "IBM_CLAIM_STANCE",
-        "loader": data_loaders.StanceLoader,
+        # "loader": data_loaders.StanceLoader,
+        "loader": data_loaders.StanceLoaderContext,
         "id2label": {0: "CON", 1: "PRO"},
     },
     "perspectrum": {
         "task_dir": "PERSPECTRUM",
-        "loader": data_loaders.StanceLoader,
+        # "loader": data_loaders.StanceLoader,
+        "loader": data_loaders.StanceLoaderContext,
         "id2label": {0: "UNDERMINE", 1: "SUPPORT"},
     },
     "scd": {
         "task_dir": "SCD",
-        "loader": data_loaders.StanceLoader,
+        # "loader": data_loaders.StanceLoader,
+        "loader": data_loaders.StanceLoaderContext,
         "id2label": {0: "against", 1: "for"},
     },
     "semeval2016t6": {
         "task_dir": "SemEval2016Task6",
-        "loader": data_loaders.StanceLoader,
+        # "loader": data_loaders.StanceLoader,
+        "loader": data_loaders.StanceLoaderContext,
         "id2label": {0: "AGAINST", 1: "FAVOR", 2: "NONE"},
     },
     "semeval2019t7": {
         "task_dir": "SemEval2019Task7",
-        "loader": data_loaders.StanceLoader,
+        # "loader": data_loaders.StanceLoader,
+        "loader": data_loaders.StanceLoaderContext,
         "id2label": {0: "support", 1: "deny", 2: "query", 3: "comment"},
     },
     "snopes": {
         "task_dir": "Snopes",
-        "loader": data_loaders.StanceLoader,
+        # "loader": data_loaders.StanceLoader,
+        "loader": data_loaders.StanceLoaderContext,
         "id2label": {0: "refute", 1: "agree"},
     },
     # Others
     "covidlies": {
         "task_dir": "covidlies",
-        "loader": data_loaders.StanceLoader,
+        # "loader": data_loaders.StanceLoader,
+        "loader": data_loaders.StanceLoaderContext,
         "id2label": {0: "positive", 1: "negative"},
     },
     "emergent": {
         "task_dir": "emergent",
-        "loader": data_loaders.StanceLoader,
+        # "loader": data_loaders.StanceLoader,
+        "loader": data_loaders.StanceLoaderContext,
         "id2label": {0: "against", 1: "for", 2: "observing"},
     },
     "mtsd": {
         "task_dir": "mtsd",
-        "loader": data_loaders.StanceLoader,
+        # "loader": data_loaders.StanceLoader,
+        "loader": data_loaders.StanceLoaderContext,
         "id2label": {0: "AGAINST", 1: "FAVOR", 2: "NONE"},
     },
     "poldeb": {
         "task_dir": "politicalDebates",
-        "loader": data_loaders.StanceLoader,
+        # "loader": data_loaders.StanceLoader,
+        "loader": data_loaders.StanceLoaderContext,
         "id2label": {0: "for", 1: "against"},
     },
     "rumor": {
         "task_dir": "rumor",
-        "loader": data_loaders.StanceLoader,
+        # "loader": data_loaders.StanceLoader,
+        "loader": data_loaders.StanceLoaderContext,
         "id2label": {0: "endorse", 1: "deny", 2: "question", 3: "neutral", 4: "unrelated"},
     },
     "vast": {
         "task_dir": "vast",
-        "loader": data_loaders.StanceLoader,
+        # "loader": data_loaders.StanceLoader,
+        "loader": data_loaders.StanceLoaderContext,
         "id2label": {0: "con", 1: "pro", 2: "neutral"},
     },
     "wtwt": {
         "task_dir": "wtwt",
-        "loader": data_loaders.StanceLoader,
+        # "loader": data_loaders.StanceLoader,
+        "loader": data_loaders.StanceLoaderContext,
         "id2label": {0: "comment", 1: "refute", 2: "support", 3: "unrelated"},
     },
 }
